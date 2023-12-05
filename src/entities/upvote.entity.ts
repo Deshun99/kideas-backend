@@ -1,4 +1,6 @@
-import { Entity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'upvotes' })
-export class Upvote {}
+export class Upvote {
+    @PrimaryGeneratedColumn()
+}
