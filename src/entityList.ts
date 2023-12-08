@@ -1,21 +1,19 @@
-import { ForumCategory } from "./entities/forum-category.entity";
-import { ForumComment } from "./entities/forum-comment.entity";
-import { ForumPost } from "./entities/forum-post.entity";
 import { Multimedia } from "./entities/multimedia.entity";
-import { TopicCategory } from "./entities/topic-category.entity";
-import { TopicComment } from "./entities/topic-comment.entity";
+import { Category } from "./entities/category.entity";
+import { Comment } from "./entities/comment.entity";
 import { Topic } from "./entities/topic.entity";
 import { Upvote } from "./entities/upvote.entity";
 import { User } from "./entities/user.entity";
+import { ChatMessage } from "./entities/chat-message.entity";
+import { Chat } from "./entities/chat.entity";
 
 export const entityList = [
     User,
-    ForumCategory,
-    ForumComment,
-    ForumPost,
     Multimedia,
-    TopicCategory,
-    TopicComment,
+    Category,
+    ChatMessage,
+    Chat,
+    Comment,
     Topic,
     Upvote,
 ]

@@ -1,6 +1,8 @@
 import UserRoleEnum from "src/enums/userRole.enum";
 import UserStatusEnum from "src/enums/userStatus.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Topic } from "./topic.entity";
+import { Comment } from "./comment.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -38,4 +40,14 @@ export class User {
 
   @Column({ default: 0 })
   points: number;
+
+  @OneToMany(() => Topic, (topic) => topic.user, { cascade: true })
+  topics: Topic[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
+  comments: Comment[];
+
+  constructor(entity: Partial<User>) {
+    Object.assign(this, entity);
+  }
 }
