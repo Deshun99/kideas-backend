@@ -4,15 +4,14 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { entityList } from './entityList';
 import { UserModule } from './user/user.module';
-import { ForumCategoryModule } from './forum-category/forum-category.module';
-import { ForumPostModule } from './forum-post/forum-post.module';
-import { ForumCommentModule } from './forum-comment/forum-comment.module';
 import { TopicModule } from './topic/topic.module';
-import { TopicCategoryModule } from './topic-category/topic-category.module';
-import { TopicCommentModule } from './topic-comment/topic-comment.module';
 import { MultimediaModule } from './multimedia/multimedia.module';
 import { UpvoteModule } from './upvote/upvote.module';
 import { UploadModule } from './upload/upload.module';
+import { CategoryModule } from './category/category.module';
+import { CommentModule } from './comment/comment.module';
+import { ChatModule } from './chat/chat.module';
+import { ChatMessageModule } from './chat-message/chat-message.module';
 
 require('dotenv').config();
 
@@ -30,15 +29,14 @@ require('dotenv').config();
       timezone: '+08:00',
     }),
     UserModule,
-    ForumCategoryModule,
-    ForumPostModule,
-    ForumCommentModule,
     TopicModule,
-    TopicCategoryModule,
-    TopicCommentModule,
     MultimediaModule,
     UpvoteModule,
     UploadModule,
+    CategoryModule,
+    CommentModule,
+    ChatModule,
+    ChatMessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
