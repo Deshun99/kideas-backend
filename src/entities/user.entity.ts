@@ -27,7 +27,6 @@ export class User {
   @Column({
     type: 'enum',
     enum: UserStatusEnum,
-    default: UserStatusEnum.ACTIVE,
   })
   status: UserStatusEnum;
 
@@ -38,7 +37,7 @@ export class User {
   })
   role: UserRoleEnum;
 
-  @Column({ default: 0 })
+  @Column()
   points: number;
 
   @OneToMany(() => Topic, (topic) => topic.user, { cascade: true })
@@ -48,6 +47,8 @@ export class User {
   comments: Comment[];
 
   constructor(entity: Partial<User>) {
+    this.status = UserStatusEnum.ACTIVE;
+    this.points = 0;
     Object.assign(this, entity);
   }
 }
