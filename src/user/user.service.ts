@@ -89,7 +89,8 @@ export class UserService {
         relations: {
           topics: true,
           comments: true,
-        }
+        },
+        select: ['userId', 'userName', 'email', 'contactNo', 'createdAt', 'status', 'role', 'points']
       });
 
       return {
