@@ -21,6 +21,9 @@ export class User {
   @Column()
   contactNo: string;
 
+  @Column()
+  profilePictureUrl: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

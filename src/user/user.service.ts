@@ -205,8 +205,34 @@ export class UserService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.userRepository.findOneBy({
+        userId: id,
+      });
+
+      if (!user) {
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      Object.assign(user, updateUserDto);
+
+      const updatedUser = await this.userRepository.save(user);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'User particulars have been updated',
+        data: updatedUser,
+      };
+    } catch (err) {
+      throw new HttpException(
+        err.message || 'An error occurred during the update.',
+        err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   remove(id: number) {

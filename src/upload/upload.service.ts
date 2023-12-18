@@ -1,26 +1,74 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUploadDto } from './dto/create-upload.dto';
-import { UpdateUploadDto } from './dto/update-upload.dto';
+import { PutObjectCommand, DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config/dist';
+
+require('dotenv').config();
 
 @Injectable()
 export class UploadService {
-  create(createUploadDto: CreateUploadDto) {
-    return 'This action adds a new upload';
+  private readonly s3Client = new S3Client({
+    region: process.env.AWS_S3_REGION,
+  });
+
+  constructor(private readonly configService: ConfigService) {}
+
+  async upload(fileName: string, file: Buffer) {
+    const contentType = this.getContentTypeByFile(fileName);
+
+    console.log(contentType);
+
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET,
+        Key: fileName,
+        Body: file,
+        ContentType: contentType,
+      }),
+    );
+
+    const s3Url = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileName}`;
+
+    console.log(s3Url);
+
+    return { url: s3Url };
   }
 
-  findAll() {
-    return `This action returns all upload`;
+  async remove(url: string): Promise<void> {
+    const fileName = this.extractFileNameFromUrl(url);
+    console.log(fileName);
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.S3_BUCKET,
+        Key: fileName,
+      }),
+    );
+    console.log(fileName, 'is removed');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} upload`;
+  private extractFileNameFromUrl(url: string): string | null {
+    const regex = /https:\/\/.+\.s3\..+\.amazonaws\.com\/([^"]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
   }
 
-  update(id: number, updateUploadDto: UpdateUploadDto) {
-    return `This action updates a #${id} upload`;
-  }
+  private getContentTypeByFile(fileName: string): string {
+    const fileExtension = fileName.split('.').pop().toLowerCase();
 
-  remove(id: number) {
-    return `This action removes a #${id} upload`;
+    console.log('File type');
+    console.log(fileExtension);
+    switch (fileExtension) {
+      case 'jpeg':
+      case 'jpg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'pdf':
+        return 'application/pdf';
+      // Add other file extensions and MIME types as needed
+      default:
+        return 'application/octet-stream'; // Fallback to binary if unknown type
+    }
   }
 }
