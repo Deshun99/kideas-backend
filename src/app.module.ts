@@ -12,6 +12,7 @@ import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
 import { ChatModule } from './chat/chat.module';
 import { ChatMessageModule } from './chat-message/chat-message.module';
+import { ConfigModule } from '@nestjs/config';
 
 require('dotenv').config();
 
@@ -33,6 +34,7 @@ require('dotenv').config();
     MultimediaModule,
     UpvoteModule,
     UploadModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     CategoryModule,
     CommentModule,
     ChatModule,

@@ -7,6 +7,7 @@ export class CreateUserDto {
   password: string;
   contactNo: string;
   createdAt: Date;
+  profilePictureUrl: string;
   status: UserStatusEnum;
   role: UserRoleEnum;
   points: number;
