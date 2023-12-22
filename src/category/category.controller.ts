@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpStatus, HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -8,13 +8,33 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    try {
+      const result = await this.categoryService.create(createCategoryDto);
+      return result;
+    } catch (error) {
+      if (error) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      }
+      throw new InternalServerErrorException(
+        'Unable to create category at this time. Please try again later.',
+      );
+    }
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll() {
+    try {
+      const result = await this.categoryService.findAll();
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to retrieve category this time. Please try again later.',
+      );
+    }
   }
 
   @Get(':id')
@@ -22,9 +42,23 @@ export class CategoryController {
     return this.categoryService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
+    try {
+      console.log(updateCategoryDto);
+      const result = await this.categoryService.update(id, updateCategoryDto);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Delete(':id')
