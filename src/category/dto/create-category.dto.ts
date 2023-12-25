@@ -1,4 +1,5 @@
 export class CreateCategoryDto {
-   categoryTitle: string;
-   isArchived: boolean;
+  categoryTitle: string;
+  forumGuidelines: string;
+  isArchived: boolean;
 }

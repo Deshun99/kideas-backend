@@ -12,6 +12,9 @@ export class Category {
   @Column()
   isArchived: boolean;
 
+  @Column()
+  forumGuidelines: string;
+
   @OneToMany(() => Topic, (topic) => topic.category, { cascade: true })
   topics: Topic[];
 
