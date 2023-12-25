@@ -48,13 +48,15 @@ export class CategoryService {
     try {
       const categoryList = await this.categoryRepository.find({
         relations: {
-          topics: true,
+          topics: {
+            multimedias: true, 
+          },
         },
       });
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Category Fpunf',
+        message: 'Category Found',
         data: categoryList,
       };
     } catch (error) {

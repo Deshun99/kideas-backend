@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Put, Query } from '@nestjs/common';
 import { TopicService } from './topic.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
@@ -8,23 +8,67 @@ export class TopicController {
   constructor(private readonly topicService: TopicService) {}
 
   @Post()
-  create(@Body() createTopicDto: CreateTopicDto) {
-    return this.topicService.create(createTopicDto);
+  async create(@Body() createTopicDto: CreateTopicDto) {
+    try {
+      const result = await this.topicService.create(createTopicDto);
+      return result;
+    } catch (error) {
+      if (error) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      }
+      throw new InternalServerErrorException(
+        'Unable to create topic at this time. Please try again later.',
+      );
+    }
   }
 
   @Get()
-  findAll() {
-    return this.topicService.findAll();
+  async findAll() {
+    try {
+      const result = await this.topicService.findAllTopics();
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to retrieve topic this time. Please try again later.',
+      );
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.topicService.findOne(+id);
+  @Get('/myTopic')
+  async findMyTopic(@Query('userId') userId: string) {
+    try {
+      const result = await this.topicService.findMyTopics(userId);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to find topic this time. Please try again later.',
+      );
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTopicDto: UpdateTopicDto) {
-    return this.topicService.update(+id, updateTopicDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateTopicDto: UpdateTopicDto,
+  ) {
+    try {
+      console.log(updateTopicDto);
+      const result = await this.topicService.update(id, updateTopicDto);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Delete(':id')
