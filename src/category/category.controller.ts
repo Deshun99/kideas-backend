@@ -10,6 +10,7 @@ export class CategoryController {
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     try {
+      console.log(createCategoryDto);
       const result = await this.categoryService.create(createCategoryDto);
       return result;
     } catch (error) {
@@ -62,7 +63,15 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.categoryService.remove(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 }
