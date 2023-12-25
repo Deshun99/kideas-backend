@@ -24,7 +24,8 @@ export class CategoryService {
 
       const newCategory = new Category({
         categoryTitle: createCategoryDto.categoryTitle,
-        isArchived: false,
+        forumGuidelines: createCategoryDto.forumGuidelines,
+        isArchived: createCategoryDto.isArchived,
       })
 
       console.log(newCategory);
@@ -114,7 +115,16 @@ export class CategoryService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    try {
+      return await this.categoryRepository.delete({
+        categoryId: id,
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to delete category',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
