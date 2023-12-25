@@ -63,7 +63,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     try {
       return this.categoryService.remove(id);
     } catch (error) {
