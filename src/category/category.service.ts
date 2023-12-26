@@ -68,12 +68,17 @@ export class CategoryService {
   async findActiveCategory() {
     try {
       const categoryList = await this.categoryRepository.find({
-        where: { isArchived: false }
+        where: { isArchived: false },
+        relations: {
+          topics: {
+            multimedias: true,
+          },
+        },
       });
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Category Fpunf',
+        message: 'Active Category Found',
         data: categoryList,
       };
     } catch (error) {
