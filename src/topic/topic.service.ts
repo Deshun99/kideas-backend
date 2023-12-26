@@ -17,7 +17,7 @@ export class TopicService {
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
   ) {}
-  
+
   async create(createTopicDto: CreateTopicDto) {
     try {
       const { userId, categoryId, ...dtoExcludingParentId } = createTopicDto;
@@ -64,6 +64,28 @@ export class TopicService {
         relations: {
           user: true,
           multimedias: true,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Topic Found',
+        data: topicList,
+      };
+    } catch (error) {
+      throw new NotFoundException('No topic found');
+    }
+  }
+
+  async findAllSortedTopics() {
+    try {
+      const topicList = await this.topicRepository.find({
+        relations: {
+          user: true,
+          multimedias: true,
+        },
+        order: {
+          createdAt: 'DESC', 
         },
       });
 

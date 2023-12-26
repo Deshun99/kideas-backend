@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, HttpException, HttpStatus, 
 import { TopicService } from './topic.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
+import { Public } from 'src/user/public.decorator';
 
 @Controller('topic')
 export class TopicController {
@@ -26,6 +27,22 @@ export class TopicController {
   async findAll() {
     try {
       const result = await this.topicService.findAllTopics();
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to retrieve topic this time. Please try again later.',
+      );
+    }
+  }
+
+  @Public()
+  @Get('/sorted')
+  async findAllSorted() {
+    try {
+      const result = await this.topicService.findAllSortedTopics();
       return result;
     } catch (error) {
       if (error instanceof NotFoundException) {

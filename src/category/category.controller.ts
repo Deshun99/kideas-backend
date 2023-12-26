@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpStatus, Htt
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Public } from 'src/user/public.decorator';
 
 @Controller('category')
 export class CategoryController {
@@ -27,6 +28,22 @@ export class CategoryController {
   async findAll() {
     try {
       const result = await this.categoryService.findAll();
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to retrieve category this time. Please try again later.',
+      );
+    }
+  }
+
+  @Public()
+  @Get('/public')
+  async findAllActiveCategory() {
+    try {
+      const result = await this.categoryService.findActiveCategory();
       return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
