@@ -6,6 +6,7 @@ import { Category } from 'src/entities/category.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { Topic } from 'src/entities/topic.entity';
+import TopicStatusEnum from 'src/enums/topicStatus.enum';
 
 @Injectable()
 export class TopicService {
@@ -84,6 +85,7 @@ export class TopicService {
         relations: {
           user: true,
           multimedias: true,
+          category: true,
         },
         order: {
           createdAt: 'DESC', 
@@ -106,6 +108,7 @@ export class TopicService {
         relations: {
           user: true,
           multimedias: true,
+          category: true,
         },
         where: {
           user: {
@@ -147,6 +150,36 @@ export class TopicService {
       throw new HttpException(
         err.message || 'An error occurred during the update.',
         err.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async deleteTopicContentCreator(
+    topicId: number,
+    userId: string,
+  ) {
+    try {
+      const topic = await this.topicRepository.findOneBy({
+        topicId: topicId,
+        user: { userId: userId },
+      });
+
+      if (!topic) {
+        throw new HttpException('Topic id not found', HttpStatus.NOT_FOUND);
+      }
+
+      topic.status = TopicStatusEnum.INACTIVE;
+      const updatedTopic = await this.topicRepository.save(topic);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Topic have been updated',
+        data: updatedTopic,
+      };
+    } catch (err) {
+      throw new HttpException(
+        err.message || 'An error occurred during the update.',
+        err.status || HttpStatus.NOT_FOUND,
       );
     }
   }
