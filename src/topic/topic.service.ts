@@ -45,6 +45,7 @@ export class TopicService {
       });
 
       await this.topicRepository.save(topic);
+      
       return {
         statusCode: HttpStatus.OK,
         message: 'Topic created successfully',

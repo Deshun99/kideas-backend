@@ -12,6 +12,7 @@ export class TopicController {
   async create(@Body() createTopicDto: CreateTopicDto) {
     try {
       const result = await this.topicService.create(createTopicDto);
+      console.log(result);
       return result;
     } catch (error) {
       if (error) {

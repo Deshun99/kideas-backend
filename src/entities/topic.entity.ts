@@ -13,7 +13,7 @@ export class Topic {
   topicTitle: string;
 
   @Column()
-  topicDesiption: string;
+  topicDescription: string;
 
   @CreateDateColumn()
   createdAt: Date;
