@@ -72,6 +72,8 @@ export class CategoryService {
         relations: {
           topics: {
             multimedias: true,
+            user: true,
+            category: true,
           },
         },
       });

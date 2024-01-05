@@ -93,4 +93,20 @@ export class TopicController {
   remove(@Param('id') id: string) {
     return this.topicService.remove(+id);
   }
+
+  @Put('/delete/:topicId/:userId')
+  deleteTopicContentCreator(
+    @Param('topicId') topicId: number,
+    @Param('userId') userId: string,
+  ) {
+    try {
+      return this.topicService.deleteTopicContentCreator(topicId, userId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
 }
