@@ -2,6 +2,7 @@ import MultimediaStatusEnum from "src/enums/multimediaStatus.enum";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { Topic } from "./topic.entity";
 import { Comment } from "./comment.entity";
+import { User } from "./user.entity";
 
 @Entity({ name: 'multimedias' })
 export class Multimedia {
@@ -18,6 +19,9 @@ export class Multimedia {
   thumbnailUrl: string;
 
   @Column()
+  multimediaTitle: string;
+
+  @Column()
   multimediaDescription: string;
 
   @Column({
@@ -31,6 +35,11 @@ export class Multimedia {
     nullable: false,
   })
   topic: Topic;
+
+  @ManyToOne(() => User, (user) => user.multimedias, {
+    nullable: false,
+  })
+  user: User;
 
   @OneToMany(() => Comment, (comment) => comment.multimedia, {
     cascade: true,
