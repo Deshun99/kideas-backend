@@ -137,7 +137,19 @@ export class TopicService {
         throw new HttpException('Topic id not found', HttpStatus.NOT_FOUND);
       }
 
+      const { categoryId, userId, ...dtoExcludingParentId } = updateTopicDto;
+
+      const category = await this.categoryRepository.findOneBy({
+        categoryId: categoryId,
+      })
+
+      if (!category) {
+        throw new HttpException('Category id not found', HttpStatus.NOT_FOUND);
+      }
+
       Object.assign(topic, updateTopicDto);
+
+      topic.category = category;
 
       const updatedTopic = await this.topicRepository.save(topic);
 
