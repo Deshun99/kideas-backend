@@ -79,6 +79,25 @@ export class TopicService {
     }
   }
 
+  async findOneTopic(topicId: number) {
+    try {
+      const topic = await this.topicRepository.findOne({
+        relations: {
+          user: true,
+          multimedias: true,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'One Topic Found',
+        data: topic,
+      };
+    } catch (error) {
+      throw new NotFoundException('No topic found');
+    }
+  }
+
   async findAllSortedTopics() {
     try {
       const topicList = await this.topicRepository.find({

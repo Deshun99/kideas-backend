@@ -40,6 +40,22 @@ export class TopicController {
   }
 
   @Public()
+  @Get(':id')
+  async findOneTopic(@Param('id') id: number) {
+    try {
+      const result = await this.topicService.findOneTopic(id);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Unable to retrieve topic this time. Please try again later.',
+      );
+    }
+  }
+
+  @Public()
   @Get('/sorted')
   async findAllSorted() {
     try {
