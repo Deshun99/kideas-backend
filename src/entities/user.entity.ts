@@ -3,6 +3,7 @@ import UserStatusEnum from "src/enums/userStatus.enum";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Topic } from "./topic.entity";
 import { Comment } from "./comment.entity";
+import { Multimedia } from "./multimedia.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -45,6 +46,9 @@ export class User {
 
   @OneToMany(() => Topic, (topic) => topic.user, { cascade: true })
   topics: Topic[];
+
+  @OneToMany(() => Multimedia, (multimedia) => multimedia.user, { cascade: true })
+  multimedias: Multimedia[];
 
   @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
   comments: Comment[];
