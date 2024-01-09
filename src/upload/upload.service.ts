@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PutObjectCommand, DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config/dist';
+import { v4 as uuidv4 } from 'uuid';
 
 require('dotenv').config();
 
@@ -12,7 +13,17 @@ export class UploadService {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async upload(fileName: string, file: Buffer) {
+  async upload(originalFileName: string, file: Buffer) {
+    // Sanitize the original file name
+    const sanitizedFileName = originalFileName
+      .replace(/\s+/g, '_')
+      .replace(/[^\w.-]/g, '');
+
+    // Extract the file extension
+    const fileExtension = sanitizedFileName.split('.').pop();
+
+    // Generate a new file name using UUID
+    const fileName = uuidv4() + '.' + fileExtension;
     const contentType = this.getContentTypeByFile(fileName);
 
     console.log(contentType);
@@ -22,6 +33,7 @@ export class UploadService {
         Bucket: process.env.S3_BUCKET,
         Key: fileName,
         Body: file,
+        ContentDisposition: 'inline',
         ContentType: contentType,
       }),
     );
@@ -51,6 +63,27 @@ export class UploadService {
     return match ? match[1] : null;
   }
 
+  // private getContentTypeByFile(fileName: string): string {
+  //   const fileExtension = fileName.split('.').pop().toLowerCase();
+
+  //   console.log('File type');
+  //   console.log(fileExtension);
+  //   switch (fileExtension) {
+  //     case 'jpeg':
+  //     case 'jpg':
+  //       return 'image/jpeg';
+  //     case 'png':
+  //       return 'image/png';
+  //     case 'gif':
+  //       return 'image/gif';
+  //     case 'pdf':
+  //       return 'application/pdf';
+  //     // Add other file extensions and MIME types as needed
+  //     default:
+  //       return 'application/octet-stream'; // Fallback to binary if unknown type
+  //   }
+  // }
+
   private getContentTypeByFile(fileName: string): string {
     const fileExtension = fileName.split('.').pop().toLowerCase();
 
@@ -66,6 +99,26 @@ export class UploadService {
         return 'image/gif';
       case 'pdf':
         return 'application/pdf';
+
+      // Video types
+      case 'mp4':
+        return 'video/mp4';
+      case 'avi':
+        return 'video/x-msvideo';
+      case 'mov':
+        return 'video/quicktime';
+      case 'wmv':
+        return 'video/x-ms-wmv';
+      case 'flv':
+        return 'video/x-flv';
+      case 'mkv':
+        return 'video/x-matroska';
+      case 'webm':
+        return 'video/webm';
+      case 'mpeg':
+      case 'mpg':
+        return 'video/mpeg';
+
       // Add other file extensions and MIME types as needed
       default:
         return 'application/octet-stream'; // Fallback to binary if unknown type
