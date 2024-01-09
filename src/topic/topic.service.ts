@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { Topic } from 'src/entities/topic.entity';
 import TopicStatusEnum from 'src/enums/topicStatus.enum';
+import { FindOptionsSelect } from 'typeorm';
+import { Multimedia } from 'src/entities/multimedia.entity';
 
 @Injectable()
 export class TopicService {
@@ -82,9 +84,13 @@ export class TopicService {
   async findOneTopic(topicId: number) {
     try {
       const topic = await this.topicRepository.findOne({
+        where: { topicId },
         relations: {
           user: true,
-          multimedias: true,
+          multimedias: {
+            user: true,
+            comments: true,
+          }
         },
       });
 
